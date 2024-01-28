@@ -80,13 +80,12 @@ body {
     </script>
        -->
 
-    <script type="module" src="{% static 'js/app.js' %}"></script>
+    <!-- <script type="module" src="{% static 'js/app.js' %}"></script> -->
 
       <script type="module">
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls';
-
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -94,11 +93,7 @@ document.body.appendChild( renderer.domElement );
 
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000);
-
-
-
-
+const camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 1000);
 
 // Create a material for the planes
 const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x050505, side: THREE.DoubleSide });
@@ -106,39 +101,10 @@ const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x050505, side: THREE
 // Create the six planes
 const planeGeometry = new THREE.PlaneGeometry(100000, 100000); // Adjust the size as needed
 
-// const planeFront = new THREE.Mesh(planeGeometry, planeMaterial);
-// planeFront.position.z = -600;
-// scene.add(planeFront);
-
-// const planeBack = new THREE.Mesh(planeGeometry, planeMaterial);
-// planeBack.position.z = 50;
-// scene.add(planeBack);
-
-// const planeLeft = new THREE.Mesh(planeGeometry, planeMaterial);
-// planeLeft.position.x = -100;
-// planeLeft.rotation.y = Math.PI / 2;
-// scene.add(planeLeft);
-
-// const planeRight = new THREE.Mesh(planeGeometry, planeMaterial);
-// planeRight.position.x = 50;
-// planeRight.rotation.y = Math.PI / 2;
-// scene.add(planeRight);
-
-// const planeTop = new THREE.Mesh(planeGeometry, planeMaterial);
-// planeTop.position.y = 50;
-// planeTop.rotation.x = Math.PI / 2;
-// scene.add(planeTop);
-
 const planeBottom = new THREE.Mesh(planeGeometry, planeMaterial);
 planeBottom.position.y = -100;
 planeBottom.rotation.x = Math.PI / 2;
 scene.add(planeBottom);
-
-
-
-
-
-
 
 // Set the camera's position to be 10 units away from the origin
 camera.position.set(70, 10, 10); // Position at (10, 10, 10) for a diagonal view
@@ -179,7 +145,7 @@ scene.add(directionalLight);
 
 // Directional Light - simulates sunlight
 var directionalLight = new THREE.DirectionalLight(0xffffff, 10);
-directionalLight.position.set(0,10, -5);
+directionalLight.position.set(100,10, -5);
 // directionalLight.target.set(0,0,0);
 scene.add(directionalLight);
 
@@ -188,16 +154,6 @@ var directionalLight = new THREE.DirectionalLight(0xffffff, 5);
 directionalLight.position.set(0,-10, 5);
 // directionalLight.target.set(0,0,0);
 scene.add(directionalLight);
-
-// // Directional Light - simulates sunlight
-// var directionalLight = new THREE.DirectionalLight(0xffffff, 10);
-// directionalLight.position.set(0,0,100);
-// scene.add(directionalLight);
-
-// // Add the second directional light
-// const directionalLight2 = new THREE.DirectionalLight(0xffffff, 10);
-// directionalLight.position.set(-49, -49, -49);
-// scene.add(directionalLight2);
 
 const keyStates = {
     ArrowUp: false,    // Pitch Down
@@ -215,7 +171,6 @@ const keyStates = {
 let translationVelocity = new THREE.Vector3(0, 0, 0);
 let rotationVelocity = new THREE.Vector3(0, 0, 0);
 
-
 document.addEventListener('keydown', (event) => {
     if (keyStates[event.key] !== undefined) {
         keyStates[event.key] = true;
@@ -230,64 +185,113 @@ document.addEventListener('keyup', (event) => {
     }
 });
 
-
-function updateCamera() {
-    // Apply acceleration based on key states
-    if (keyStates.ArrowUp) translationVelocity.z -= translationAcceleration;
-    if (keyStates.ArrowDown) translationVelocity.z += translationAcceleration;
-    if (keyStates.ArrowLeft) translationVelocity.x -= translationAcceleration;
-    if (keyStates.ArrowRight) translationVelocity.x += translationAcceleration;
-
-    if (keyStates.w) rotationVelocity.x -= rotationAcceleration;
-    if (keyStates.s) rotationVelocity.x += rotationAcceleration;
-    if (keyStates.a) rotationVelocity.y += rotationAcceleration;
-    if (keyStates.d) rotationVelocity.y -= rotationAcceleration;
-
-    if (keyStates.q) rotationVelocity.z += rotationAcceleration;
-    if (keyStates.e) rotationVelocity.z -= rotationAcceleration;
-
-    // Apply dampening
-    translationVelocity.multiplyScalar(translationDampening);
-    rotationVelocity.multiplyScalar(rotationDampening);
-
-    // Update camera position and rotation
-    camera.translateX(translationVelocity.x);
-    camera.translateY(translationVelocity.y);
-    camera.translateZ(translationVelocity.z);
-
-    camera.rotateX(rotationVelocity.x);
-    camera.rotateY(rotationVelocity.y);
-    camera.rotateZ(rotationVelocity.z);
-}
-
-
-
 // Node creation
-function createNode(radius, material, position) {
-    const geometry = new THREE.SphereGeometry(radius, 32, 32);
+function createNode(keyword, position) {
+    const geometry = new THREE.SphereGeometry(2.5, 32, 32);
 //    const material = new THREE.MeshStandardMaterial({ color: color });
 
-    const sphere = new THREE.Mesh(geometry, material);
-    sphere.position.copy(position);
+
+    const sphereMaterial = new THREE.MeshPhongMaterial({
+        color: 0x555555, // or any color you prefer
+        transparent: true,
+        opacity: .95 // Adjust this value as needed
+    });
+
+
+    const sphere = new THREE.Mesh(geometry, sphereMaterial);
+    sphere.position.set(position.x, position.y, position.z);
+    //sphere.position.copy(position);
+    sphere.userData.keyword = keyword;
     return sphere;
 }
 
+function createKeywordBillboard(keyword, position) {
+    // Similar to createBillboard, but for the keyword
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 256;
+    canvas.height = 128;
+
+    // Draw a rounded rectangle
+    const borderRadius = 20;
+    context.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    drawRoundedRect(context, 0, 0, canvas.width, canvas.height, borderRadius);
+    context.fill();
+
+    context.fillStyle = 'black';
+    context.font = '20px Arial';
+    context.textAlign = 'center';
+    context.fillText(keyword, 128, 64);
 
 
-// // Connect nodes with lines
-// const connections = [];
-// nodes.forEach((node, index) => {
-//     const maxConnections = 2 + Math.floor(Math.random() * 2); // 2 or 3 connections
-//     for (let i = 0; i < maxConnections; i++) {
-//         const targetIndex = Math.floor(Math.random() * nodeCount);
-//         if (targetIndex !== index) {
-//             const geometry = new THREE.BufferGeometry().setFromPoints([node.position, nodes[targetIndex].position]);
-//             const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x909090 }));
-//             scene.add(line);
-//             connections.push({ node1: node, node2: nodes[targetIndex], line: line });
-//         }
-//     }
-// });
+    // Function to draw a rounded rectangle
+    function drawRoundedRect(context, x, y, width, height, radius) {
+        context.beginPath();
+        context.moveTo(x + radius, y);
+        context.arcTo(x + width, y, x + width, y + height, radius);
+        context.arcTo(x + width, y + height, x, y + height, radius);
+        context.arcTo(x, y + height, x, y, radius);
+        context.arcTo(x, y, x + width, y, radius);
+        context.closePath();
+    }
+
+
+    const texture = new THREE.Texture(canvas);
+    texture.needsUpdate = true;
+
+    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 1, side: THREE.DoubleSide });
+
+//    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: false });
+    const planeGeometry = new THREE.PlaneGeometry(5, 2.5);
+    const plane = new THREE.Mesh(planeGeometry, material);
+    plane.position.set(position.x, position.y + 3, position.z + 3); // Offset front and above
+
+    return plane;
+}
+
+
+
+function createSummaryBillboard(summary, position) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 256;
+    canvas.height = 128;
+
+    // Function to draw a rounded rectangle
+    function drawRoundedRect(context, x, y, width, height, radius) {
+        context.beginPath();
+        context.moveTo(x + radius, y);
+        context.arcTo(x + width, y, x + width, y + height, radius);
+        context.arcTo(x + width, y + height, x, y + height, radius);
+        context.arcTo(x, y + height, x, y, radius);
+        context.arcTo(x, y, x + width, y, radius);
+        context.closePath();
+    }
+
+    // Draw a rounded rectangle
+    const borderRadius = 20;
+    context.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    drawRoundedRect(context, 0, 0, canvas.width, canvas.height, borderRadius);
+    context.fill();
+
+    // Set text properties
+    context.fillStyle = 'black'; // Black text
+    context.textAlign = 'center';
+    context.font = '20px Arial';
+    context.fillText(summary, 128, 64);
+
+    const texture = new THREE.Texture(canvas);
+    texture.needsUpdate = true;
+
+    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 1, side: THREE.DoubleSide });
+    const planeGeometry = new THREE.PlaneGeometry(5, 2.5);
+    const plane = new THREE.Mesh(planeGeometry, material);
+    plane.position.set(position.x, position.y + 3, position.z - 3); // Positioned above the node
+
+    plane.visible = false;
+
+    return plane;
+}
 
 
 function createCylinderBetweenPoints(point1, point2, radius, material) {
@@ -307,6 +311,8 @@ function createCylinderBetweenPoints(point1, point2, radius, material) {
 
     return edge;
 }
+
+
 
 
 function updateCylinders() {
@@ -331,7 +337,6 @@ function updateCylinders() {
 
         // Update the cylinder's scale to match the distance between nodes
         // The cylinder's height is along the y-axis, so we scale the y-component
-//        cylinder.scale.set(1, 0.02 + length * .018, 1); // Scale y-axis by length/2
         cylinder.scale.set(1, length, 1); // Scale y-axis by length/2
 
         // Calculate midpoint
@@ -365,7 +370,7 @@ function applyForces() {
 
     // Apply attraction and damping
     for (let i = 0; i < nodes.length; i++) {
-        const node1 = nodes[i];
+        var node1 = nodes[i];
         for (let j = 0; j < connections.length; j++) {
             const { node1: connectedNode1, node2: connectedNode2 } = connections[j];
             if (node1 === connectedNode1 || node1 === connectedNode2) {
@@ -382,7 +387,62 @@ function applyForces() {
         // Apply damping to the velocity
         velocities[i].multiplyScalar(dampingFactor);
         node1.position.add(velocities[i]);
+
+
+        console.log("here")
+
+        // Update the position of the keyword billboard
+        var keywordBillboard = keywordBillboards[i];
+        if (keywordBillboard) {
+            keywordBillboard.position.copy(node1.position); // Start with node's position
+            keywordBillboard.position.y += 3; // Adjust vertical position as needed
+            keywordBillboard.position.z += 3; // Adjust vertical position as needed
+            keywordBillboard.lookAt(0, 0, 200);
+        }
+
+        // Update the position of the summary billboard
+        var summaryBillboard = summaryBillboards[i];
+        if (summaryBillboard) {
+            summaryBillboard.position.copy(node1.position); // Start with node's position
+            summaryBillboard.position.y -= 3; // Adjust vertical position as needed
+            summaryBillboard.position.z += 3; // Adjust vertical position as needed
+            summaryBillboard.lookAt(0, 0, 200);
+        }
+        // Update positions of billboards
+//        const node1 = nodes[i];
+//         var keywordBillboard = keywordBillboards[i];
+//         if (keywordBillboard) {
+//             // Calculate direction from node to camera
+//             var directionToCamera = new THREE.Vector3().subVectors(camera.position, node1.position).normalize();
+//             // Set distance in front of the node for the billboard
+// //            const distanceInFront = 6; // Adjust this value as needed
+//             var downwardOffset = new THREE.Vector3(2, 2, 0); // Offset 5 units downwards
+
+//             // Update billboard position
+//             keywordBillboard.position.copy(node1.position).add(directionToCamera.multiplyScalar(1)).add(downwardOffset);
+            
+//             // Make billboard face the camera
+//             keywordBillboard.lookAt(-200,0,0);
+//         }
+
+//         var summaryBillboard = summaryBillboards[i];
+//         if (summaryBillboard && node1) {
+//             // Calculate direction from node to camera
+//             var directionToCamera = new THREE.Vector3().subVectors(camera.position, node1.position).normalize();
+//             // Set distance in front of the node for the billboard
+// //            const distanceInFront = 6; // Adjust this value as needed
+//             var downwardOffset = new THREE.Vector3(2, -2, 0); // Offset 5 units downwards
+
+//             // Update billboard position
+//             summaryBillboard.position.copy(node1.position).add(directionToCamera.multiplyScalar(1)).add(downwardOffset);
+            
+//             // Make billboard face the camera
+//             summaryBillboard.lookAt(-200,0,0);
+//         }
+
     }
+
+
 
     // Update line geometry
     // connections.forEach(({ node1, node2, line }) => {
@@ -390,6 +450,319 @@ function applyForces() {
     //     line.geometry = new THREE.BufferGeometry().setFromPoints([node1.position, node2.position]);
     // });
 }
+
+
+function fadeInBillboard(billboard) {
+    let opacity = billboard.material.opacity;
+    const maxOpacity = 1;
+    const fadeSpeed = 0.05;
+
+    billboard.visible = true;
+
+    function animateFadeIn() {
+        if (opacity < maxOpacity) {
+            opacity += fadeSpeed;
+            billboard.material.opacity = opacity;
+            requestAnimationFrame(animateFadeIn);
+        }
+        // } else {
+        //     billboard.visible = true;
+        // }
+    }
+
+    animateFadeIn();
+}
+
+function fadeOutBillboard(billboard) {
+    let opacity = billboard.material.opacity;
+    const fadeSpeed = 0.05;
+
+    function animateFadeOut() {
+        if (opacity > 0) {
+            opacity -= fadeSpeed;
+            billboard.material.opacity = opacity;
+            requestAnimationFrame(animateFadeOut);
+        } else {
+            billboard.visible = false;
+        }
+    }
+
+    animateFadeOut();
+}
+
+// async function fetchKeywords() {
+//     try {
+//         const response = await fetch('http://localhost:8000/api/keywords/'); // Replace with your Django app's URL
+//         if (!response.ok) {
+//             throw new Error('Network response was not ok');
+//         }
+//         return await response.json();
+//     } catch (error) {
+//         console.error('Failed to fetch keywords:', error);
+//     }
+// }
+
+
+
+const translationAcceleration = 0.008;
+const rotationAcceleration = 0.001;
+
+const translationDampening = 0.9;
+const rotationDampening = 0.9;
+
+
+const keywords = [
+    { keyword: "Alpha", summary: "Summary of Alpha" },
+    { keyword: "Beta", summary: "Summary of Beta" },
+    { keyword: "Gamma", summary: "Summary of Gamma" },
+    { keyword: "Delta", summary: "Summary of Delta" },
+    { keyword: "Epsilon", summary: "Summary of Epsilon" },
+    { keyword: "Zeta", summary: "Summary of Zeta" },
+    { keyword: "Eta", summary: "Summary of Eta" },
+    { keyword: "Theta", summary: "Summary of Theta" },
+    { keyword: "Iota", summary: "Summary of Iota" },
+    { keyword: "Kappa", summary: "Summary of Kappa" }
+];
+
+// Create nodes
+const nodeCount = keywords.length;
+
+const nodes = [];
+
+const velocities = []; // Store velocities
+const dampingFactor = 0.6; // Adjust this to control the rate of slowing down
+
+const baseRepulsionForce = 500; // Base magnitude of the repulsion force
+const attractionForce = 0.06;
+
+const cylinderRadius = .2;
+
+
+const sphereSize=50
+
+const cylinderMaterial = new THREE.MeshPhongMaterial({
+    color: 0x113355,      // White color
+    transparent: true,    // Enable transparency
+    opacity: 0.4          // Adjust for desired transparency level
+});
+
+
+
+
+// Array to hold billboards
+const keywordBillboards = [];
+const summaryBillboards = [];
+
+
+keywords.forEach((item, index) => {
+
+    let position = new THREE.Vector3(Math.random() * sphereSize - 0.5 * sphereSize, Math.random() * sphereSize - 0.5 * sphereSize, Math.random() * sphereSize - 0.5 * sphereSize);
+    //let position = new THREE.Vector3(index * 5, 0, 0); // Arrange nodes with some spacing
+    let node = createNode(item.keyword, position);
+    //let node = createNode(item.keyword, position);
+    let keywordBillboard = createKeywordBillboard(item.keyword, position);
+    let summaryBillboard = createSummaryBillboard(item.summary, position);
+
+    node.userData.summaryBillboard = summaryBillboard; // Link billboard to node
+
+    nodes.push(node);
+
+    scene.add(node);
+    scene.add(keywordBillboard);
+    scene.add(summaryBillboard);
+
+    // Link node to its billboard
+    node.keywordBillboard = keywordBillboard;
+    node.summaryBillboard = summaryBillboard;
+
+    // Add the billboards to their respective arrays
+    keywordBillboards.push(keywordBillboard);
+    summaryBillboards.push(summaryBillboard);
+
+    velocities.push(new THREE.Vector3(0, 0, 0)); // Initialize velocity
+
+});
+
+
+ // Connect nodes with cylinders
+const connections = [];
+nodes.forEach((node, index) => {
+    const maxConnections = 2 + Math.floor(Math.random() * 2); // 2 or 3 connections
+    for (let i = 0; i < maxConnections; i++) {
+        const targetIndex = Math.floor(Math.random() * nodeCount);
+        if (targetIndex !== index) {
+            const cylinder = createCylinderBetweenPoints(node.position, nodes[targetIndex].position, cylinderRadius, cylinderMaterial);
+            scene.add(cylinder);
+            connections.push({ node1: node, node2: nodes[targetIndex], cylinder: cylinder });
+        }
+    }
+});
+
+
+
+
+
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+
+
+window.addEventListener('click', event => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+
+    console.log("Intersections found:", intersects.length); // Check if any intersections are found
+
+    if (intersects.length > 0) {
+        let selectedNode = intersects[0].object;
+        console.log("Clicked on:", selectedNode); // Log the clicked object
+
+        if (selectedNode.userData.summaryBillboard) {
+            let summaryBillboard = selectedNode.userData.summaryBillboard;
+            // billboard.visible = !billboard.visible; // Toggle visibility
+
+            if (summaryBillboard.visible) {
+                fadeOutBillboard(summaryBillboard);
+            } else {
+                fadeInBillboard(summaryBillboard);
+            }
+
+            console.log("Toggling billboard visibility:", summaryBillboard.visible); // Log visibility status
+        }
+    }
+});
+
+
+
+function animate() {
+    requestAnimationFrame(animate);
+    applyForces();
+    updateCylinders();
+    // Update controls
+    controls.update();
+
+    // // Update each billboard to face the camera
+    // summaryBillboards.forEach(summaryBillboard => {
+    //     summaryBillboard.lookAt(0,0,200);
+    // });
+
+    // // Update each billboard to face the camera
+    // keywordBillboards.forEach(keywordBillboard => {
+    //     keywordBillboard.lookAt(0,0,200);
+    // });
+
+    
+//    updateCamera();
+    renderer.render(scene, camera);
+}
+
+animate();
+
+// window.addEventListener('click', event => {
+//     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+//     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+//     raycaster.setFromCamera(mouse, camera);
+//     const intersects = raycaster.intersectObjects(scene.children);
+
+//     if (intersects.length > 0) {
+//         let selectedNode = intersects[0].object;
+//         if (selectedNode.userData.billboard) {
+//             let billboard = selectedNode.userData.billboard;
+
+
+// //            billboard.visible = !billboard.visible; // Toggle visibility
+
+//             if (billboard.visible) {
+//                 fadeOutBillboard(billboard);
+//             } else {
+//                 fadeInBillboard(billboard);
+//             }
+
+//         }
+//     }
+// });
+
+
+// function onMouseClick(event) {
+//     // Convert the mouse position to normalized device coordinates (-1 to +1) for both components
+//     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+//     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+//     // Update the picking ray with the camera and mouse position
+//     raycaster.setFromCamera(mouse, camera);
+
+//     // Calculate objects intersecting the picking ray
+// //    const intersects = raycaster.intersectObjects(nodes);
+//     const intersects = raycaster.intersectObjects(scene.children);
+
+
+//     if (intersects.length > 0) {
+//         let selectedNode = intersects[0].object;
+//         if (selectedNode.userData.billboard) {
+//             let billboard = selectedNode.userData.billboard;
+
+//             if (billboard.visible) {
+//                 fadeOutBillboard(billboard);
+//             } else {
+//                 fadeInBillboard(billboard);
+//             }
+
+// //    billboard.visible = !billboard.visible; // Toggle visibility
+//         }
+//     }
+
+//     // if (intersects.length > 0) {
+//     //     const node = intersects[0].object;
+//     //     const billboard = node.billboard;
+//     //     if (billboard.visible) {
+//     //         fadeOutBillboard(billboard);
+//     //     } else {
+//     //         fadeInBillboard(billboard);
+//     //     }
+//     // }
+
+// }
+
+// window.addEventListener('click', onMouseClick, false);
+
+
+
+
+
+// function updateCamera() {
+//     // Apply acceleration based on key states
+//     if (keyStates.ArrowUp) translationVelocity.z -= translationAcceleration;
+//     if (keyStates.ArrowDown) translationVelocity.z += translationAcceleration;
+//     if (keyStates.ArrowLeft) translationVelocity.x -= translationAcceleration;
+//     if (keyStates.ArrowRight) translationVelocity.x += translationAcceleration;
+
+//     if (keyStates.w) rotationVelocity.x -= rotationAcceleration;
+//     if (keyStates.s) rotationVelocity.x += rotationAcceleration;
+//     if (keyStates.a) rotationVelocity.y += rotationAcceleration;
+//     if (keyStates.d) rotationVelocity.y -= rotationAcceleration;
+
+//     if (keyStates.q) rotationVelocity.z += rotationAcceleration;
+//     if (keyStates.e) rotationVelocity.z -= rotationAcceleration;
+
+//     // Apply dampening
+//     translationVelocity.multiplyScalar(translationDampening);
+//     rotationVelocity.multiplyScalar(rotationDampening);
+
+//     // Update camera position and rotation
+//     camera.translateX(translationVelocity.x);
+//     camera.translateY(translationVelocity.y);
+//     camera.translateZ(translationVelocity.z);
+
+//     camera.rotateX(rotationVelocity.x);
+//     camera.rotateY(rotationVelocity.y);
+//     camera.rotateZ(rotationVelocity.z);
+// }
+
 
 
 // Rest of the code for creating the scene, nodes, and animation loop remains the same
@@ -533,89 +906,21 @@ function applyForces() {
 
 
 
-const translationAcceleration = 0.008;
-const rotationAcceleration = 0.001;
 
-const translationDampening = 0.9;
-const rotationDampening = 0.9;
-
-
-// Create nodes
-const nodeCount = 80;
-const nodes = [];
-
-const velocities = []; // Store velocities
-const dampingFactor = 0.6; // Adjust this to control the rate of slowing down
-
-
-    // const repulsionForce = 0.05;
-    // const attractionForce = 0.001;
-
-const baseRepulsionForce = 8; // Base magnitude of the repulsion force
-const attractionForce = 0.06;
-
-const cylinderRadius = .2;
-//const cylinderMaterial = new THREE.MeshStandardMaterial({ color: 0x909090 }); // Grey color
-
-
-const sphereSize=50
-
-const cylinderMaterial = new THREE.MeshPhongMaterial({
-    color: 0x113355,      // White color
-    transparent: true,    // Enable transparency
-    opacity: 0.4          // Adjust for desired transparency level
-});
-
-
-const sphereMaterial = new THREE.MeshPhongMaterial({
-      color: 0x555555, // or any color you prefer
-      transparent: true,
-      opacity: .95 // Adjust this value as needed
-    });
-
-for (let i = 0; i < nodeCount; i++) {
-    const position = new THREE.Vector3(Math.random() * sphereSize - 0.5 * sphereSize, Math.random() * sphereSize - 0.5 * sphereSize, Math.random() * sphereSize - 0.5 * sphereSize);
-    const node = createNode(1, sphereMaterial, position);
-    nodes.push(node);
-    scene.add(node);
-
-    velocities.push(new THREE.Vector3(0, 0, 0)); // Initialize velocity
-}
-
-
- // Connect nodes with cylinders
-const connections = [];
-nodes.forEach((node, index) => {
-    const maxConnections = 2 + Math.floor(Math.random() * 2); // 2 or 3 connections
-    for (let i = 0; i < maxConnections; i++) {
-        const targetIndex = Math.floor(Math.random() * nodeCount);
-        if (targetIndex !== index) {
-            const cylinder = createCylinderBetweenPoints(node.position, nodes[targetIndex].position, cylinderRadius, cylinderMaterial);
-            scene.add(cylinder);
-            connections.push({ node1: node, node2: nodes[targetIndex], cylinder: cylinder });
-        }
-    }
-});
-
-
-
-
-
-function animate() {
-    requestAnimationFrame(animate);
-    applyForces();
-    updateCylinders();
-    // Update controls
-    controls.update();
-    updateCamera();
-    renderer.render(scene, camera);
-}
-
-animate();
-
-
-
-
+// // Connect nodes with lines
+// const connections = [];
+// nodes.forEach((node, index) => {
+//     const maxConnections = 2 + Math.floor(Math.random() * 2); // 2 or 3 connections
+//     for (let i = 0; i < maxConnections; i++) {
+//         const targetIndex = Math.floor(Math.random() * nodeCount);
+//         if (targetIndex !== index) {
+//             const geometry = new THREE.BufferGeometry().setFromPoints([node.position, nodes[targetIndex].position]);
+//             const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x909090 }));
+//             scene.add(line);
+//             connections.push({ node1: node, node2: nodes[targetIndex], line: line });
+//         }
+//     }
+// });
 
 
         </script>
@@ -623,3 +928,4 @@ animate();
     <!-- <script src="{% static 'js/app.js' %}"></script> -->
 </body>
 </html>
+
