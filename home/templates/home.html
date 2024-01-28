@@ -1,0 +1,625 @@
+<!-- myapp/templates/home.html -->
+<!DOCTYPE html>
+<html>
+<head>
+
+  {% load static %}
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+  <title>Orbiting Spheres</title>
+    <style>
+        canvas { width: 100%; height: 100% }
+    </style>
+
+<!-- 
+    <script>
+        // const socket = new WebSocket('ws://' + window.location.host + '/ws/some_path/');
+        const socket = new WebSocket('ws://localhost:8080/ws/billboards/');
+//        const socket = new WebSocket('ws://127.0.0.1:8080/ws/billboards');
+
+        socket.onopen = function(e) {
+            console.log('WebSocket Open', e);
+            socket.send(JSON.stringify({'message': 'Hello!'}));
+        };
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log('Message from server ', data.message);
+        };
+
+
+
+        socket.onclose = function(e) {
+            console.error('WebSocket closed unexpectedly');
+        };
+    </script> -->
+
+
+{% load static %}
+
+
+<style>
+
+body {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+
+}
+
+#glCanvas {
+
+  flex: 1;
+
+}
+</style>
+
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.1/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.1/examples/jsm/"
+    }
+  }
+</script>
+
+</head>
+<body>
+    <!-- <canvas id="glCanvas"></canvas> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
+
+
+    <!-- <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@r128/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@r128/examples/jsm/"
+          }
+        }
+    </script>
+       -->
+
+    <script type="module" src="{% static 'js/app.js' %}"></script>
+
+      <script type="module">
+
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls';
+
+
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000);
+
+
+
+
+
+// Create a material for the planes
+const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x050505, side: THREE.DoubleSide });
+
+// Create the six planes
+const planeGeometry = new THREE.PlaneGeometry(100000, 100000); // Adjust the size as needed
+
+// const planeFront = new THREE.Mesh(planeGeometry, planeMaterial);
+// planeFront.position.z = -600;
+// scene.add(planeFront);
+
+// const planeBack = new THREE.Mesh(planeGeometry, planeMaterial);
+// planeBack.position.z = 50;
+// scene.add(planeBack);
+
+// const planeLeft = new THREE.Mesh(planeGeometry, planeMaterial);
+// planeLeft.position.x = -100;
+// planeLeft.rotation.y = Math.PI / 2;
+// scene.add(planeLeft);
+
+// const planeRight = new THREE.Mesh(planeGeometry, planeMaterial);
+// planeRight.position.x = 50;
+// planeRight.rotation.y = Math.PI / 2;
+// scene.add(planeRight);
+
+// const planeTop = new THREE.Mesh(planeGeometry, planeMaterial);
+// planeTop.position.y = 50;
+// planeTop.rotation.x = Math.PI / 2;
+// scene.add(planeTop);
+
+const planeBottom = new THREE.Mesh(planeGeometry, planeMaterial);
+planeBottom.position.y = -100;
+planeBottom.rotation.x = Math.PI / 2;
+scene.add(planeBottom);
+
+
+
+
+
+
+
+// Set the camera's position to be 10 units away from the origin
+camera.position.set(70, 10, 10); // Position at (10, 10, 10) for a diagonal view
+
+// Point the camera towards the origin (0, 0, 0)
+camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+// Initialize OrbitControls
+const controls = new OrbitControls(camera, renderer.domElement);
+
+// Configure controls (optional)
+controls.enableDamping = true; // An animation loop is required when either damping or auto-rotation are enabled
+controls.dampingFactor = 0.25;
+controls.screenSpacePanning = false;
+
+
+// Ambient Light - adds diffuse light to the scene
+var ambientLight = new THREE.AmbientLight(0xffffff, 2);
+scene.add(ambientLight);
+
+// Directional Light - simulates sunlight
+var directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+directionalLight.position.set(0,10,-20);
+// directionalLight.target.set(0,0,0);
+scene.add(directionalLight);
+
+// Directional Light - simulates sunlight
+var directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+directionalLight.position.set(0,10,0);
+// directionalLight.target.set(0,0,0);
+scene.add(directionalLight);
+
+// Directional Light - simulates sunlight
+var directionalLight = new THREE.DirectionalLight(0xffffff, 10);
+directionalLight.position.set(-10,10,20);
+// directionalLight.target.set(0,0,0);
+scene.add(directionalLight);
+
+// Directional Light - simulates sunlight
+var directionalLight = new THREE.DirectionalLight(0xffffff, 10);
+directionalLight.position.set(0,10, -5);
+// directionalLight.target.set(0,0,0);
+scene.add(directionalLight);
+
+// Directional Light - simulates sunlight
+var directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+directionalLight.position.set(0,-10, 5);
+// directionalLight.target.set(0,0,0);
+scene.add(directionalLight);
+
+// // Directional Light - simulates sunlight
+// var directionalLight = new THREE.DirectionalLight(0xffffff, 10);
+// directionalLight.position.set(0,0,100);
+// scene.add(directionalLight);
+
+// // Add the second directional light
+// const directionalLight2 = new THREE.DirectionalLight(0xffffff, 10);
+// directionalLight.position.set(-49, -49, -49);
+// scene.add(directionalLight2);
+
+const keyStates = {
+    ArrowUp: false,    // Pitch Down
+    ArrowDown: false,  // Pitch Up
+    ArrowLeft: false,  // Yaw Left
+    ArrowRight: false, // Yaw Right
+    w: false,          // Move Forward
+    s: false,          // Move Backward
+    a: false,          // Strafe Left
+    d: false,          // Strafe Right
+    q: false,          // Roll Left
+    e: false           // Roll Right
+};
+
+let translationVelocity = new THREE.Vector3(0, 0, 0);
+let rotationVelocity = new THREE.Vector3(0, 0, 0);
+
+
+document.addEventListener('keydown', (event) => {
+    if (keyStates[event.key] !== undefined) {
+        keyStates[event.key] = true;
+        event.preventDefault(); // Prevents default browser action for arrow keys
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    if (keyStates[event.key] !== undefined) {
+        keyStates[event.key] = false;
+        event.preventDefault(); // Prevents default browser action for arrow keys
+    }
+});
+
+
+function updateCamera() {
+    // Apply acceleration based on key states
+    if (keyStates.ArrowUp) translationVelocity.z -= translationAcceleration;
+    if (keyStates.ArrowDown) translationVelocity.z += translationAcceleration;
+    if (keyStates.ArrowLeft) translationVelocity.x -= translationAcceleration;
+    if (keyStates.ArrowRight) translationVelocity.x += translationAcceleration;
+
+    if (keyStates.w) rotationVelocity.x -= rotationAcceleration;
+    if (keyStates.s) rotationVelocity.x += rotationAcceleration;
+    if (keyStates.a) rotationVelocity.y += rotationAcceleration;
+    if (keyStates.d) rotationVelocity.y -= rotationAcceleration;
+
+    if (keyStates.q) rotationVelocity.z += rotationAcceleration;
+    if (keyStates.e) rotationVelocity.z -= rotationAcceleration;
+
+    // Apply dampening
+    translationVelocity.multiplyScalar(translationDampening);
+    rotationVelocity.multiplyScalar(rotationDampening);
+
+    // Update camera position and rotation
+    camera.translateX(translationVelocity.x);
+    camera.translateY(translationVelocity.y);
+    camera.translateZ(translationVelocity.z);
+
+    camera.rotateX(rotationVelocity.x);
+    camera.rotateY(rotationVelocity.y);
+    camera.rotateZ(rotationVelocity.z);
+}
+
+
+
+// Node creation
+function createNode(radius, material, position) {
+    const geometry = new THREE.SphereGeometry(radius, 32, 32);
+//    const material = new THREE.MeshStandardMaterial({ color: color });
+
+    const sphere = new THREE.Mesh(geometry, material);
+    sphere.position.copy(position);
+    return sphere;
+}
+
+
+
+// // Connect nodes with lines
+// const connections = [];
+// nodes.forEach((node, index) => {
+//     const maxConnections = 2 + Math.floor(Math.random() * 2); // 2 or 3 connections
+//     for (let i = 0; i < maxConnections; i++) {
+//         const targetIndex = Math.floor(Math.random() * nodeCount);
+//         if (targetIndex !== index) {
+//             const geometry = new THREE.BufferGeometry().setFromPoints([node.position, nodes[targetIndex].position]);
+//             const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x909090 }));
+//             scene.add(line);
+//             connections.push({ node1: node, node2: nodes[targetIndex], line: line });
+//         }
+//     }
+// });
+
+
+function createCylinderBetweenPoints(point1, point2, radius, material) {
+    const direction = new THREE.Vector3().subVectors(point2, point1);
+    const orientation = new THREE.Matrix4();
+    orientation.lookAt(point1, point2, new THREE.Object3D().up);
+    orientation.multiply(new THREE.Matrix4().set(1, 0, 0, 0,
+                                                 0, 0, 1, 0,
+                                                 0, -1, 0, 0,
+                                                 0, 0, 0, 1));
+    const edgeGeometry = new THREE.CylinderGeometry(radius, radius, 1, 8, 1);
+    const edge = new THREE.Mesh(edgeGeometry, material);
+    edge.applyMatrix4(orientation);
+    edge.position.x = (point2.x + point1.x) / 2;
+    edge.position.y = (point2.y + point1.y) / 2;
+    edge.position.z = (point2.z + point1.z) / 2;
+
+    return edge;
+}
+
+
+function updateCylinders() {
+    connections.forEach(connection => {
+        const { node1, node2, cylinder } = connection;
+
+        // Calculate the direction and length between nodes
+        const direction = new THREE.Vector3().subVectors(node2.position, node1.position);
+        var length = direction.length();
+
+
+        // Debugging: Log distances and cylinder length for the first two nodes
+        if (node1 === nodes[0] && node2 === nodes[1]) {
+            console.log("Distance between Node 0 and Node 1: ", length);
+            console.log("Cylinder length (before scaling): ", cylinder.scale.y * 2);
+        }
+
+        // Rotate the cylinder to align it with the direction vector
+        const axis = new THREE.Vector3(0, 1, 0); // Default cylinder axis
+        const quaternion = new THREE.Quaternion().setFromUnitVectors(axis, direction.normalize());
+        cylinder.quaternion.copy(quaternion);
+
+        // Update the cylinder's scale to match the distance between nodes
+        // The cylinder's height is along the y-axis, so we scale the y-component
+//        cylinder.scale.set(1, 0.02 + length * .018, 1); // Scale y-axis by length/2
+        cylinder.scale.set(1, length, 1); // Scale y-axis by length/2
+
+        // Calculate midpoint
+        const midpoint = new THREE.Vector3().addVectors(node1.position, node2.position).multiplyScalar(0.5);
+        cylinder.position.copy(midpoint);
+
+    });
+}
+
+
+
+function applyForces() {
+
+    // Apply forces to velocities
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+            const node1 = nodes[i];
+            const node2 = nodes[j];
+
+            const direction = new THREE.Vector3().subVectors(node1.position, node2.position);
+            const distance = direction.length();
+            direction.normalize();
+
+            // Repulsion increases dramatically as nodes get closer
+            const repulsion = baseRepulsionForce / Math.pow(distance, 2);
+
+            velocities[i].addScaledVector(direction, repulsion);
+            velocities[j].addScaledVector(direction, -repulsion);
+        }
+    }
+
+    // Apply attraction and damping
+    for (let i = 0; i < nodes.length; i++) {
+        const node1 = nodes[i];
+        for (let j = 0; j < connections.length; j++) {
+            const { node1: connectedNode1, node2: connectedNode2 } = connections[j];
+            if (node1 === connectedNode1 || node1 === connectedNode2) {
+                const node2 = (node1 === connectedNode1) ? connectedNode2 : connectedNode1;
+                const direction = new THREE.Vector3().subVectors(node2.position, node1.position);
+                const distance = direction.length();
+                direction.normalize();
+
+                const attraction = attractionForce * (distance - 5); // Attract nodes to a certain distance
+                velocities[i].addScaledVector(direction, attraction);
+            }
+        }
+
+        // Apply damping to the velocity
+        velocities[i].multiplyScalar(dampingFactor);
+        node1.position.add(velocities[i]);
+    }
+
+    // Update line geometry
+    // connections.forEach(({ node1, node2, line }) => {
+    //     line.geometry.dispose();
+    //     line.geometry = new THREE.BufferGeometry().setFromPoints([node1.position, node2.position]);
+    // });
+}
+
+
+// Rest of the code for creating the scene, nodes, and animation loop remains the same
+
+
+
+
+// function createNode(radius, color, position) {
+//     const geometry = new THREE.SphereGeometry(radius, 32, 32);
+//     const material = new THREE.MeshStandardMaterial({ color: color });
+//     const sphere = new THREE.Mesh(geometry, material);
+//     sphere.position.set(position.x, position.y, position.z);
+//     return sphere;
+// }
+
+
+// function createCylinderBetweenPoints(point1, point2, radius, material) {
+//     const direction = new THREE.Vector3().subVectors(point2, point1);
+//     const orientation = new THREE.Matrix4();
+//     const length = direction.length();
+
+//     // Create geometry with correct length
+//     const edgeGeometry = new THREE.CylinderGeometry(radius, radius, length, 8, 1);
+//     const edge = new THREE.Mesh(edgeGeometry, material);
+
+//     // Align edge to the y-axis (cylinder's default axis)
+//     orientation.lookAt(point1, point2, new THREE.Object3D().up);
+//     orientation.multiply(new THREE.Matrix4().set(1, 0, 0, 0,
+//                                                  0, 0, 1, 0,
+//                                                  0, -1, 0, 0,
+//                                                  0, 0, 0, 1));
+//     edge.applyMatrix4(orientation);
+
+//     // Set position to midpoint between point1 and point2
+//     edge.position.x = (point2.x + point1.x) / 2;
+//     edge.position.y = (point2.y + point1.y) / 2;
+//     edge.position.z = (point2.z + point1.z) / 2;
+
+//     return edge;
+// }
+
+
+
+// function updateCylinders() {
+//     connections.forEach(connection => {
+//         const { node1, node2, cylinder } = connection;
+
+//         // Calculate the direction vector from node1 to node2
+//         const direction = new THREE.Vector3().subVectors(node2.position, node1.position);
+//         const length = direction.length();
+
+//         // Update the cylinder's scale to match the distance between nodes
+//         cylinder.scale.set(1, length / 2, 1); // Assuming the cylinder's height is along the y-axis
+
+//         // Calculate midpoint
+//         const midpoint = new THREE.Vector3().addVectors(node1.position, node2.position).multiplyScalar(0.5);
+//         cylinder.position.copy(midpoint);
+
+//         // Align cylinder
+//         const axis = new THREE.Vector3(0, 1, 0); // Assuming the cylinder is initially aligned along y-axis
+//         const quaternion = new THREE.Quaternion().setFromUnitVectors(axis, direction.normalize());
+//         cylinder.quaternion.copy(quaternion);
+//     });
+// }
+
+// function applyForces() {
+//     const repulsionForce = 0.000001;
+//     const attractionForce = 0.00001;
+
+//     // Apply repulsion between all nodes
+//     for (let i = 0; i < nodes.length; i++) {
+//         for (let j = i + 1; j < nodes.length; j++) {
+//             const node1 = nodes[i];
+//             const node2 = nodes[j];
+
+//             const direction = new THREE.Vector3().subVectors(node1.position, node2.position);
+//             const distance = direction.length();
+
+//             // Repulsion force decreases with distance
+//             const forceMagnitude = Math.max(repulsionForce / (distance * distance), 0);
+            
+//             direction.normalize();
+//             node1.position.addScaledVector(direction, forceMagnitude);
+//             node2.position.addScaledVector(direction, -forceMagnitude);
+//         }
+//     }
+
+//     // Apply attraction only between connected nodes
+//     connections.forEach(connection => {
+//         const { node1, node2 } = connection;
+
+//         const direction = new THREE.Vector3().subVectors(node2.position, node1.position);
+//         const distance = direction.length();
+
+//         // Attraction force increases with distance (up to a limit)
+//         const forceMagnitude = Math.min(-attractionForce * (distance - 5), 0);
+
+//         direction.normalize();
+//         node1.position.addScaledVector(direction, forceMagnitude);
+//         node2.position.addScaledVector(direction, -forceMagnitude);
+//     });
+// }
+
+
+// const cylinderRadius = 0.1;
+// const cylinderMaterial = new THREE.MeshStandardMaterial({ color: 0x909090 });
+
+// const nodeCount = 10;
+// const nodes = [];
+// // Store connections
+// const connections = [];
+// // Create nodes
+// for (let i = 0; i < nodeCount; i++) {
+//     const position = new THREE.Vector3(Math.random() * 50 - 25, Math.random() * 50 - 25, Math.random() * 50 - 25);
+//     const node = createNode(1, 0x808080, position);
+//     nodes.push(node);
+//     scene.add(node);
+// }
+
+// // Connect nodes
+// for (let i = 0; i < nodeCount; i++) {
+//     // Determine the number of connections (2 or 3)
+//     const numberOfConnections = 2 + Math.round(Math.random()); // 2 or 3
+
+//     let connectedNodes = new Set();
+//     while (connectedNodes.size < numberOfConnections) {
+//         // Choose a random node to connect to, excluding the node itself
+//         let targetIndex = Math.floor(Math.random() * nodeCount);
+//         if (targetIndex !== i && !connectedNodes.has(targetIndex)) {
+//             connectedNodes.add(targetIndex);
+//         }
+//     }
+
+//     // Create connections
+//     connectedNodes.forEach(targetIndex => {
+//         const cylinder = createCylinderBetweenPoints(nodes[i].position, nodes[targetIndex].position, cylinderRadius, cylinderMaterial);
+//         scene.add(cylinder);
+//         connections.push({ node1: nodes[i], node2: nodes[targetIndex], cylinder });
+//     });
+// }
+
+
+
+const translationAcceleration = 0.008;
+const rotationAcceleration = 0.001;
+
+const translationDampening = 0.9;
+const rotationDampening = 0.9;
+
+
+// Create nodes
+const nodeCount = 80;
+const nodes = [];
+
+const velocities = []; // Store velocities
+const dampingFactor = 0.6; // Adjust this to control the rate of slowing down
+
+
+    // const repulsionForce = 0.05;
+    // const attractionForce = 0.001;
+
+const baseRepulsionForce = 8; // Base magnitude of the repulsion force
+const attractionForce = 0.06;
+
+const cylinderRadius = .2;
+//const cylinderMaterial = new THREE.MeshStandardMaterial({ color: 0x909090 }); // Grey color
+
+
+const sphereSize=50
+
+const cylinderMaterial = new THREE.MeshPhongMaterial({
+    color: 0x113355,      // White color
+    transparent: true,    // Enable transparency
+    opacity: 0.4          // Adjust for desired transparency level
+});
+
+
+const sphereMaterial = new THREE.MeshPhongMaterial({
+      color: 0x555555, // or any color you prefer
+      transparent: true,
+      opacity: .95 // Adjust this value as needed
+    });
+
+for (let i = 0; i < nodeCount; i++) {
+    const position = new THREE.Vector3(Math.random() * sphereSize - 0.5 * sphereSize, Math.random() * sphereSize - 0.5 * sphereSize, Math.random() * sphereSize - 0.5 * sphereSize);
+    const node = createNode(1, sphereMaterial, position);
+    nodes.push(node);
+    scene.add(node);
+
+    velocities.push(new THREE.Vector3(0, 0, 0)); // Initialize velocity
+}
+
+
+ // Connect nodes with cylinders
+const connections = [];
+nodes.forEach((node, index) => {
+    const maxConnections = 2 + Math.floor(Math.random() * 2); // 2 or 3 connections
+    for (let i = 0; i < maxConnections; i++) {
+        const targetIndex = Math.floor(Math.random() * nodeCount);
+        if (targetIndex !== index) {
+            const cylinder = createCylinderBetweenPoints(node.position, nodes[targetIndex].position, cylinderRadius, cylinderMaterial);
+            scene.add(cylinder);
+            connections.push({ node1: node, node2: nodes[targetIndex], cylinder: cylinder });
+        }
+    }
+});
+
+
+
+
+
+function animate() {
+    requestAnimationFrame(animate);
+    applyForces();
+    updateCylinders();
+    // Update controls
+    controls.update();
+    updateCamera();
+    renderer.render(scene, camera);
+}
+
+animate();
+
+
+
+
+
+
+        </script>
+
+    <!-- <script src="{% static 'js/app.js' %}"></script> -->
+</body>
+</html>
